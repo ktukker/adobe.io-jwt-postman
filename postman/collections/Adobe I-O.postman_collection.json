@@ -140,60 +140,6 @@
 			"response": []
 		},
 		{
-			"name": "IMS: JWT Get Access Token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "1759a9d4-ac9a-4eb2-b5d1-a608a43a2cad",
-						"type": "text/javascript",
-						"exec": [
-							"var data = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"access_token\", data.access_token);"
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "client_id",
-							"value": "{{clientID}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{clientSecret}}",
-							"type": "text"
-						},
-						{
-							"key": "jwt_token",
-							"value": "{{jwt_token}}",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{IMS}}/ims/exchange/jwt/",
-					"host": [
-						"{{IMS}}"
-					],
-					"path": [
-						"ims",
-						"exchange",
-						"jwt",
-						""
-					]
-				},
-				"description": "JWT exchange flow"
-			},
-			"response": []
-		},
-		{
 			"name": "IMS: Get Profile",
 			"request": {
 				"method": "GET",
