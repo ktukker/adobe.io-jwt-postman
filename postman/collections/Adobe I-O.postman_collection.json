@@ -58,7 +58,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "a0f769fa-cd8b-4adc-809c-a5eb2a2fd4ee",
+						"id": "f067b81f-65d2-4672-ae41-0ff1338d25f6",
 						"type": "text/javascript",
 						"exec": [
 							"// Tips from: https://github.com/kjur/jsrsasign/issues/199",
@@ -77,7 +77,7 @@
 							"\t\"exp\": Math.round(87000 + Date.now()/1000),",
 							"\t\"iss\": postman.getEnvironmentVariable(\"IMSOrg\"),",
 							"\t\"sub\": postman.getEnvironmentVariable(\"techacct\"),",
-							"\t\"aud\": \"https://ims-na1.adobelogin.com/c/\"+postman.getEnvironmentVariable(\"clientID\")",
+							"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"clientID\")",
 							"};",
 							"",
 							"meta_scopes = postman.getEnvironmentVariable(\"meta_scope\").split(',');",
@@ -87,17 +87,16 @@
 							"    data[meta_scope] = true;",
 							"});",
 							"",
-							"",
-							"",
-							"",
 							"var secret = postman.getEnvironmentVariable(\"secret\");",
 							"",
 							"var sHeader = JSON.stringify(header);",
 							"var sPayload = JSON.stringify(data);",
 							"var sJWT = KJUR.jws.JWS.sign(\"RS256\", sHeader, sPayload, secret);",
 							"",
-							"postman.setEnvironmentVariable(\"jwt_token\", sJWT);",
-							""
+							"console.log(sPayload);",
+							"console.log(sJWT);",
+							"",
+							"postman.setEnvironmentVariable(\"jwt_token\", sJWT);"
 						]
 					}
 				}
