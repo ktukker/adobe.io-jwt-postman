@@ -29,7 +29,7 @@ The Environments feature of Postman allows you to efficiently switch between mul
 
 The value for ```meta_scope``` might be more challenging to find. This setting is different per solution / product that you integrate with. You can find this in the IO Console for your created integration under the "JWT" tab. See highlighted element in the screenshot below.
 ![Imported Postman Collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/where_to_find_the_metascope.png)
-In this case the ```meta_scope``` is ```ent_dataservices_sdk```.
+In this case the ```meta_scope``` is ```ent_dataservices_sdk```. If you have created an integration that is bound to multiple Adobe solutions, you will see multiple entries with different ```meta_scope``` values defined. In this case, add all the meta_scopes to the ```meta_scope```, separated by a comma (```,```). For example ```ent_dataservices_sdk,ent_reactor_sdk```.
 
 After configuring your template, it will look like this:
 ![Imported Postman Collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/postman_environment_example.png)
