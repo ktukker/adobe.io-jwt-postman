@@ -13,7 +13,7 @@ Once your integration is setup, you can use the details inside of Postman. In my
 Postman is a very convenient tool to execute REST API calls, manage different libraries of pre-defined calls as well as different environments. I am working with various environments (internal development and staging environments, next to our production environment) and multiple customer account settings.
 
 * To get started, download Postman from the official [website] (https://www.getpostman.com/).
-* Download the Postman [collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/io_integration_details.png) and [environment template](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/postman/environments/JWT%20-%20Template.postman_environment.json) from the [Github repository](https://github.com/ktukker/adobe.io-jwt-postman).
+* Download the Postman [collection](https://raw.githubusercontent.com/ktukker/adobe.io-jwt-postman/master/postman/collections/Adobe%20I-O.postman_collection.json) and [environment template](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/postman/environments/JWT%20-%20Template.postman_environment.json) from the [Github repository](https://github.com/ktukker/adobe.io-jwt-postman).
 
 In Postman you can add the downloaded collection by clicking on the "Import" button on the top left and select the collection you want to import. 
 ![Imported Postman Collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/postman_collection.png)
@@ -40,7 +40,8 @@ Note: The ```secret``` variable contains the full text of the private key that y
 ## Bootstrapping the authentication process
 To be able to authenticate, you need to load the Crypto JavaScript library. This Postman script uses the ["RSA-Sign JavaScript Library"](https://github.com/kjur/jsrsasign). Due to limitations in the Postman sandbox, it needs to be loaded in a Global environment variable only once.
 
-* Click on "INIT: Load Crypto Library for RS256"
+* Click on "INIT: Load Crypto Library for RS256" in the left column of Postman (under the Adobe I/O Collection).
+* The pre-configured call will appear
 * Click "Send"
 
 This will load the JavaScript and store it in an internal variable for future use. When you shutdown Postman and start it up again, the script does not have to be run again as the internal variable still holds the value.
