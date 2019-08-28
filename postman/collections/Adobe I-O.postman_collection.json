@@ -72,7 +72,7 @@
 							"",
 							"var data = {",
 							"\t\"exp\": Math.round(87000 + Date.now()/1000),",
-							"\t\"iss\": postman.getEnvironmentVariable(\"IMSOrg\"),",
+							"\t\"iss\": postman.getEnvironmentVariable(\"IMS_ORG\"),",
 							"\t\"sub\": postman.getEnvironmentVariable(\"techacct\"),",
 							"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"API_KEY\")",
 							"};",
