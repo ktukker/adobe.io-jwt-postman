@@ -1,14 +1,18 @@
 # Using Postman for JWT authentication on Adobe I/O
 
+
+
 ## Introduction
 
-Working on the Experience Platform team, I am responsible for the API First strategy and availability of our APIs to Adobe and third party developers. We are using the Adobe I/O Gateway to provide developers access to these platform APIs. For authentication for third party developers, Adobe I/O is using an JWT workflow. Frequently I am testing APIs in [Postman](https://www.getpostman.com/) and I was looking for a way to execute the full authentication flow, including the generation of JWT request, signed with SHA-256. The [Adobe I/O Console](https://console.adobe.io/) allows you to generate a new JWT token, but I was looking to do everything inside of Postman. Merely there was not a complete recipe available to do this, so I rolled up my sleeves, Googled and Stackoverflowed my way through the web to put together the approach documented in this article. This article was originally written for the [Adobe I/O Blog, hosted on Medium](https://medium.com/adobe-io/using-postman-for-jwt-authentication-on-adobe-i-o-7573428ffe7f).
+Working on the Adobe Experience Platform team, I am responsible for the API First strategy and availability of our APIs to Adobe and third party developers. We are using the Adobe I/O Gateway to provide developers access to these platform APIs. For authentication for third party developers, Adobe I/O is using an JWT workflow. Frequently I am testing APIs in [Postman](https://www.getpostman.com/) and I was looking for a way to execute the full authentication flow, including the generation of JWT request, signed with SHA-256. The [Adobe I/O Console](https://console.adobe.io/) allows you to generate a new JWT token, but I was looking to do everything inside of Postman. Merely there was not a complete recipe available to do this, so I rolled up my sleeves, Googled and Stackoverflowed my way through the web to put together the approach documented in this article. This article was originally written for the [Adobe I/O Blog, hosted on Medium](https://medium.com/adobe-io/using-postman-for-jwt-authentication-on-adobe-i-o-7573428ffe7f).
 
 ## Setup I/O Integration
 
 To integrate with Adobe solutions, you can find all related information and documentation on the [adobe.io](http://www.adobe.io) website. In this case we'll be using the service-to-service pattern (using JWT). This requires to setup a new integration using [Adobe I/O Console](https://console.adobe.io/). The steps to setup a new integration can be found [here](https://www.adobe.io/apis/cloudplatform/console/authentication/gettingstarted.html) or [here](https://www.adobe.io/apis/experienceplatform/home/tutorials/alltutorials.html#!api-specification/markdown/narrative/tutorials/authenticate_to_acp_tutorial/authenticate_to_acp_tutorial.md).
 Once your integration is setup, you can use the details inside of Postman. In my case, I configured an integration to call the APIs for [Adobe Experience Platform](https://www.adobe.io/apis/experienceplatform/home.html) and the screenshot with the results are below. I will use the details listed on this screen later.
 ![I/O integration details](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/io_integration_details.png)
+
+Update: In Adobe I/O Console, there is now acapability to directly download your Postman Environment. This removes extensive copy-paste operations between I/O Console and Postman. Go ahead and click the button to download the Postman Environment.
 
 ## Downloading and configuring Postman
 
@@ -25,19 +29,20 @@ After importing the collection, import the pre-configured environment template. 
 You are now ready to configure your environment based on the settings provided in IO Console.
 
 ## Setting up environments
+Update: this part has become a lot easier with the "download Environment" button that is now available in I/O Console. Go ahead, Download the environment file. The only filed you have to populate additonally is the `PRIVATE_KEY` field. This field contains your `private.key` generated with openssl earlier. Once you have done that, you can skip and move to the next header below.
 
 The Environments feature of Postman allows you to efficiently switch between multiple pre-configured environments. The [environment template](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/postman/environments/JWT%20-%20Template.postman_environment.json) has pre-configured variable names that need to be populated with the correct values found in the I/O Console screen (see above).
 
 - Copy your values into the pre-configured template
 
-The value for `meta_scope` might be more challenging to find. This setting is different per solution / product that you integrate with. You can find this in the I/O Console for your created integration under the "JWT" tab. See highlighted element in the screenshot below.
+The value for `META_SCOPE` might be more challenging to find. This setting is different per solution / product that you integrate with. You can find this in the I/O Console for your created integration under the "JWT" tab. See highlighted element in the screenshot below.
 ![Imported Postman Collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/where_to_find_the_metascope.png)
-In this case the `meta_scope` is `ent_dataservices_sdk`. If you have created an integration that is bound to multiple Adobe solutions, you will see multiple entries with different `meta_scope` values defined. In this case, add all the meta_scopes to the `meta_scope`, separated by a comma (`,`). For example `ent_dataservices_sdk,ent_reactor_sdk`.
+In this case the `META_SCOPE` is `ent_dataservices_sdk`. If you have created an integration that is bound to multiple Adobe solutions, you will see multiple entries with different `META_SCOPE` values defined. In this case, add all the meta_scopes to the `META_SCOPE`, separated by a comma (`,`). For example `ent_dataservices_sdk,ent_reactor_sdk`.
 
 After configuring your template, it will look like this:
 ![Imported Postman Collection](https://github.com/ktukker/adobe.io-jwt-postman/raw/master/images/postman_environment_example.png)
 
-Note: The `secret` variable contains the full text of the private key that you generated for the selected integration. Copy and past it into the field including the header (`-----BEGIN RSA PRIVATE KEY------`) and footer.
+Note: The `PRIVATE_KEY` variable contains the full text of the private key that you generated for the selected integration. Copy and past it into the field including the header (`-----BEGIN RSA PRIVATE KEY------`) and footer.
 
 ## Bootstrapping the authentication process
 
@@ -86,19 +91,19 @@ Based on the environment variables for the current environment, the JWT payload 
 var data = {
 	"exp": Math.round(87000 + Date.now()/1000),
 	"iss": postman.getEnvironmentVariable("IMS_ORG"),
-	"sub": postman.getEnvironmentVariable("techacct"),
+	"sub": postman.getEnvironmentVariable("TECHNICAL_ACCOUNT_ID"),
 	"aud": "https://ims-na1.adobelogin.com/c/"+postman.getEnvironmentVariable("API_KEY")
 };
 
 var meta_scope = postman.getEnvironmentVariable("IMS")+"/s/"+
-                 postman.getEnvironmentVariable("meta_scope");
+                 postman.getEnvironmentVariable("META_SCOPE");
 data[meta_scope] = true;
 ```
 
 This payload needs to be signed using the crypto library and the private key that is stored in the environment variable. The actual encryption code was conveniently published on the [jsrsasign wiki](https://github.com/kjur/jsrsasign/wiki/Tutorial-for-JWT-generation).
 
 ```
-var secret = postman.getEnvironmentVariable("secret");
+var secret = postman.getEnvironmentVariable("PRIVATE_KEY");
 
 var sHeader = JSON.stringify(header);
 var sPayload = JSON.stringify(data);
@@ -141,3 +146,6 @@ Left as an exercise to the reader
 ## Conclusion
 
 I hope you enjoyed this article and will be using Postman a lot for JWT based integration with Adobe I/O. With this script, you won't be needed a separate command line utility to generate and encrypt your JWT token or go to the Adobe I/O Console to generate one every time you need one.
+
+## Revisions
+2018-11-27 : Update article to reflect standard naming conventions in Adobe I/O Console generated Postman environments.
