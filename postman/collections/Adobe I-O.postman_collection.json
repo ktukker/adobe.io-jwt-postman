@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "2260078e-d512-4850-8073-a21b2859d3d4",
-		"name": "Adobe I/O JWT",
+		"_postman_id": "8780c459-67c0-46ae-8f05-ddbd021df0d3",
+		"name": "Adobe I/O JWT - Medium",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -48,7 +48,7 @@
 						"id": "1759a9d4-ac9a-4eb2-b5d1-a608a43a2cad",
 						"exec": [
 							"var data = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"access_token\", data.access_token);"
+							"postman.setEnvironmentVariable(\"ACCESS_TOKEN\", data.access_token);"
 						],
 						"type": "text/javascript"
 					}
@@ -63,38 +63,45 @@
 							"",
 							"var navigator = {}; //fake a navigator object for the lib",
 							"var window = {}; //fake a window object for the lib",
-							"eval(postman.getGlobalVariable(\"jsrsasign-js\")); //import javascript jsrsasign",
+							"eval(postman.getGlobalVariable(\"jsrsasign_js\")); //import javascript jsrsasign",
+							"",
 							"",
 							"var header = {",
 							"\t\"alg\": \"RS256\"",
 							"};",
-							"console.log(1111, header);",
 							"",
 							"var data = {",
 							"\t\"exp\": Math.round(87000 + Date.now()/1000),",
 							"\t\"iss\": postman.getEnvironmentVariable(\"IMS_ORG\"),",
 							"\t\"sub\": postman.getEnvironmentVariable(\"TECHNICAL_ACCOUNT_ID\"),",
-							"\t\"aud\": postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"API_KEY\")",
+							"\t\"aud\": \"https://\" + postman.getEnvironmentVariable(\"IMS\")+\"/c/\"+postman.getEnvironmentVariable(\"API_KEY\")",
 							"};",
 							"",
-							"meta_scopes = postman.getEnvironmentVariable(\"META_SCOPE\").split(',');",
+							"meta_scopes = postman.getEnvironmentVariable(\"META_SCOPE\");",
+							"if(typeof(meta_scopes) == \"string\") {",
+							"    meta_scopes = meta_scopes.split(',');",
+							"}",
 							"meta_scopes.forEach(function(scope){",
-							"    var meta_scope = postman.getEnvironmentVariable(\"IMS\")+\"/s/\"+",
+							"    var meta_scope = \"https://\" + postman.getEnvironmentVariable(\"IMS\")+\"/s/\"+",
 							"                     scope;",
 							"    data[meta_scope] = true;",
 							"});",
 							"",
-							"var secret = postman.getEnvironmentVariable(\"CLIENT_SECRET\");",
+							"var secret = postman.getEnvironmentVariable(\"PRIVATE_KEY\");",
+							"",
+							"if (!secret) {",
+							"    console.log(\"Ensure the Private Key is added to both INITIAL and CURRENT VALUES in the active Postman environment's PRIVATE_KEY variable.\");",
+							"}",
+							"",
+							"console.log(data);",
 							"",
 							"var sHeader = JSON.stringify(header);",
-							"console.log('start 1')",
 							"var sPayload = JSON.stringify(data);",
 							"var sJWT = KJUR.jws.JWS.sign(\"RS256\", sHeader, sPayload, secret);",
-							"console.log('start 2')",
-							"console.log(sPayload);",
+							"",
 							"console.log(sJWT);",
 							"",
-							"postman.setEnvironmentVariable(\"jwt_token\", sJWT);"
+							"postman.setEnvironmentVariable(\"JWT_TOKEN\", sJWT);"
 						],
 						"type": "text/javascript"
 					}
@@ -125,6 +132,7 @@
 				},
 				"url": {
 					"raw": "https://{{IMS}}/ims/exchange/jwt/",
+					"protocol": "https",
 					"host": [
 						"{{IMS}}"
 					],
@@ -138,6 +146,89 @@
 				"description": "Generate a JWT token using the Crypto RS256\nSend to IMS for access_token"
 			},
 			"response": []
+		},
+		{
+			"name": "IMS: Get Profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "https://{{IMS}}/ims/profile/v1",
+					"protocol": "https",
+					"host": [
+						"{{IMS}}"
+					],
+					"path": [
+						"ims",
+						"profile",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Catalog: Get Datasets Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{API_KEY}}"
+					},
+					{
+						"key": "x-gw-ims-org-id",
+						"value": "{{IMS_ORG}}"
+					}
+				],
+				"url": {
+					"raw": "{{PLATFORM_GATEWAY}}/data/foundation/catalog/dataSets/",
+					"host": [
+						"{{PLATFORM_GATEWAY}}"
+					],
+					"path": [
+						"data",
+						"foundation",
+						"catalog",
+						"dataSets",
+						""
+					]
+				},
+				"description": "  "
+			},
+			"response": []
 		}
-	]
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d40e8149-1eb7-4f85-a4d2-b8664450757f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0667bacc-03ba-4071-80ec-7957274b2889",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
 }

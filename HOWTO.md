@@ -149,3 +149,4 @@ I hope you enjoyed this article and will be using Postman a lot for JWT based in
 
 ## Revisions
 2018-11-27 : Update article to reflect standard naming conventions in Adobe I/O Console generated Postman environments.
+2020-02-08 : Fix issue reading meta_scopes section in a Postman Environment. Added error message when Private Key was not included in the environment
