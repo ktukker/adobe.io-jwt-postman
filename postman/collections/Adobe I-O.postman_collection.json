@@ -14,7 +14,7 @@
 						"id": "824e628b-b420-417b-894b-417ab6412896",
 						"type": "text/javascript",
 						"exec": [
-							"postman.setGlobalVariable(\"jsrsasign-js\", responseBody);"
+							"postman.setGlobalVariable(\"jsrsasign_js\", responseBody);"
 						]
 					}
 				}
